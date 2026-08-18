@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finflow — Budget Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ══════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">💳</div>
+    <span class="brand-name">Finflow</span>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-link active" data-page="overview">
+      <div class="nav-icon">🏠</div> Overview
+    </div>
+    <div class="nav-link" data-page="income">
+      <div class="nav-icon">💰</div> Income
+    </div>
+    <div class="nav-link" data-page="expenses">
+      <div class="nav-icon">💸</div> Expenses
+    </div>
+    <div class="nav-link" data-page="trends">
+      <div class="nav-icon">📈</div> Trends
+    </div>
+  </nav>
+
+  <div class="stat-boxes">
+    <div class="stat-box">
+      <div class="stat-box-label"><div class="dot dot-green"></div> Income</div>
+      <div class="stat-box-amount" id="sideIncome">₹0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-label"><div class="dot dot-orange"></div> Expenses</div>
+      <div class="stat-box-amount" id="sideExpenses">₹0</div>
+    </div>
+  </div>
+
+  <div class="user-chip" id="userChip">
+    <div class="avatar" id="userAvatar">U</div>
+    <span class="user-chip-name" id="userNameEl">Set your name</span>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <div class="topbar">
+    <div class="greeting-text" id="greetingEl">Good morning! 👋</div>
+    <div class="topbar-actions">
+      <div class="search-bar-wrap" id="searchBarWrap"><div class="search-pill" id="searchPill">🔍 Search</div><div class="search-dropdown" id="searchDropdown"><div class="search-input-wrap"><span style="font-size:1rem;color:var(--text2)">🔍</span><input class="search-input" id="searchInput" placeholder="Search transactions..."/><button class="search-clear" id="searchClear">✕</button></div><div class="search-results" id="searchResults"><div class="search-hint">Type to search your transactions</div></div></div></div>
+    </div>
+  </div>
+
+    <!-- Mobile-only mini stats (hidden on desktop) -->
+    <div class="mobile-stats" id="mobileStats">
+      <div class="mobile-stat-card">
+        <div class="mobile-stat-label"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span> Income</div>
+        <div class="mobile-stat-value" id="mobileSideIncome">₹0</div>
+      </div>
+      <div class="mobile-stat-card">
+        <div class="mobile-stat-label"><span style="width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block"></span> Expenses</div>
+        <div class="mobile-stat-value" id="mobileSideExpenses">₹0</div>
+      </div>
+    </div>
+
+  <div class="page-tabs">
+    <button class="page-tab active" data-page="overview">Overview</button>
+    <button class="page-tab" data-page="income">Income</button>
+    <button class="page-tab" data-page="expenses">Expenses</button>
+    <button class="page-tab" data-page="trends">Trends</button>
+  </div>
+
+  <!-- ── OVERVIEW PAGE ─────────────────────────────────────────── -->
+  <div class="page active" id="page-overview">
+    <div class="overview-grid">
+
+      <!-- LEFT -->
+      <div>
+        <!-- Balance -->
+        <div class="card balance-card">
+          <div class="balance-header">
+            <div class="balance-lbl">Current Balance</div>
+            <div class="month-pill" id="monthPill">Feb 2026 ▾</div>
+          </div>
+          <div class="balance-num" id="balanceNum">₹0.00</div>
+          <div class="balance-delta" id="balanceDelta"></div>
+          <div class="wave-container">
+            <canvas id="waveCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card activity-card">
+          <div class="card-hdr">
+            <div class="card-title">Recent Activity</div>
+            <div class="card-action" id="viewAllBtn">View All →</div>
+          </div>
+          <div id="recentList">
+            <div class="empty-msg">No transactions yet.<br>Tap <strong>+</strong> to add your first one!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right-col">
+
+        <!-- Donut -->
+        <div class="card donut-card">
+          <div class="card-hdr">
+            <div class="card-title">Spending Breakdown</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-svg-holder">
+              <svg viewBox="0 0 180 180">
+                <circle cx="90" cy="90" r="72" fill="none" stroke="#f2f2f7" stroke-width="22"/>
+                <g id="donutSegs"></g>
+              </svg>
+              <div class="donut-center-txt">
+                <div class="donut-center-amt" id="donutAmt">₹0</div>
+                <div class="donut-center-lbl">SPENT</div>
+              </div>
+            </div>
+            <div class="donut-legend" id="donutLegend">
+              <span style="font-size:0.75rem;color:var(--text3)">No expenses yet</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INCOME PAGE ───────────────────────────────────────────── -->
+  <div class="page" id="page-income">
+    <div class="card full-page-card">
+      <div class="card-hdr">
+        <div class="card-title">All Income</div>
+        <div class="card-action" onclick="openModal('income')">+ Add Income</div>
+      </div>
+      <div id="incomeList">
+        <div class="empty-msg">No income recorded yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXPENSES PAGE ─────────────────────────────────────────── -->
+  <div class="page" id="page-expenses">
+    <div class="card full-page-card">
+      <div class="card-hdr">
+        <div class="card-title">All Expenses</div>
+        <div class="card-action" onclick="openModal('expense')">+ Add Expense</div>
+      </div>
+      <div class="filter-bar" id="expenseFilters"></div>
+      <div id="expenseList">
+        <div class="empty-msg">No expenses recorded yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TRENDS PAGE ───────────────────────────────────────────── -->
+  <div class="page" id="page-trends">
+    <div class="trends-grid">
+      <div class="card summary-stat">
+        <div class="summary-stat-label">Total Income</div>
+        <div class="summary-stat-val" id="trendIncome" style="color:var(--green)">₹0</div>
+        <div class="summary-stat-sub" id="trendIncomeSub">0 transactions</div>
+      </div>
+      <div class="card summary-stat">
+        <div class="summary-stat-label">Total Expenses</div>
+        <div class="summary-stat-val" id="trendExpense" style="color:var(--orange)">₹0</div>
+        <div class="summary-stat-sub" id="trendExpenseSub">0 transactions</div>
+      </div>
+      <div class="card summary-stat">
+        <div class="summary-stat-label">Net Saved</div>
+        <div class="summary-stat-val" id="trendSaved">₹0</div>
+        <div class="summary-stat-sub" id="trendSavedPct">0% of income</div>
+      </div>
+      <div class="card summary-stat">
+        <div class="summary-stat-label">Avg. Transaction</div>
+        <div class="summary-stat-val" id="trendAvg">₹0</div>
+        <div class="summary-stat-sub" id="trendAvgSub">across all entries</div>
+      </div>
+    </div>
+    <div class="card cat-breakdown" style="margin-top:1.125rem">
+      <div class="card-hdr"><div class="card-title">Expense by Category</div></div>
+      <div id="catBreakdown">
+        <div class="empty-msg">No expense data yet.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FAB -->
+<button class="fab" id="fabBtn">+</button>
+
+<!-- ═══ ADD TRANSACTION MODAL ════════════════════════════════════ -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="txModal">
+    <div class="modal-hdr">
+      <div class="modal-title">Add Transaction</div>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+    </div>
+
+    <div class="type-toggle">
+      <button class="type-btn sel-income" id="btnIncome">⬆ Income</button>
+      <button class="type-btn" id="btnExpense">⬇ Expense</button>
+    </div>
+
+    <div class="fld">
+      <label>Description</label>
+      <input type="text" id="fDesc" placeholder="e.g. Monthly salary, Coffee..."/>
+    </div>
+    <div class="fld-row">
+      <div class="fld">
+        <label>Amount (₹)</label>
+        <input type="number" id="fAmount" placeholder="0.00" min="0.01" step="0.01"/>
+      </div>
+      <div class="fld">
+        <label>Category</label>
+        <select id="fCat"></select>
+      </div>
+    </div>
+    <div class="fld">
+      <label>Date</label>
+      <input type="date" id="fDate"/>
+    </div>
+
+    <button class="submit-btn" id="submitBtn">Add Transaction</button>
+  </div>
+</div>
+
+<!-- ═══ NAME MODAL ════════════════════════════════════════════════ -->
+<div class="overlay" id="nameOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Welcome to Finflow! 👋</div>
+    </div>
+    <p class="name-modal-desc">What should we call you? This helps personalise your dashboard.</p>
+    <div class="fld">
+      <label>Your Name</label>
+      <input type="text" id="nameInput" placeholder="e.g. Priya, Rahul..." maxlength="30"/>
+    </div>
+    <button class="submit-btn" id="nameSubmitBtn">Get Started</button>
+  </div>
+</div>
+
+
+
+<script src="script.js"></script>
+
+<!-- ═══ BOTTOM NAV (mobile) ════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" data-page="overview" onclick="goPage('overview')">
+      <span class="bottom-nav-icon">🏠</span>
+      <span class="bottom-nav-label">Overview</span>
+    </button>
+    <button class="bottom-nav-item" data-page="income" onclick="goPage('income')">
+      <span class="bottom-nav-icon">💰</span>
+      <span class="bottom-nav-label">Income</span>
+    </button>
+    <button class="bottom-nav-item" data-page="expenses" onclick="goPage('expenses')">
+      <span class="bottom-nav-icon">💸</span>
+      <span class="bottom-nav-label">Expenses</span>
+    </button>
+    <button class="bottom-nav-item" data-page="trends" onclick="goPage('trends')">
+      <span class="bottom-nav-icon">📈</span>
+      <span class="bottom-nav-label">Trends</span>
+    </button>
+  </div>
+</nav>
+</body>
+</html>

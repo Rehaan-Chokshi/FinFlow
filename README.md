@@ -3,7 +3,6 @@
 A clean, responsive personal budget tracker built with vanilla HTML, CSS, and JavaScript. Track income and expenses, visualize spending by category, and monitor trends — all stored locally in your browser. No frameworks, no backend, no build step.
 
 ![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla-yellow?logo=javascript)
-![No Backend](https://img.shields.io/badge/Backend-None-lightgrey)
 ![Responsive](https://img.shields.io/badge/Design-Responsive-blue)
 
 

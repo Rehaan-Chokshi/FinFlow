@@ -7,7 +7,7 @@ A clean, responsive personal budget tracker built with vanilla HTML, CSS, and Ja
 ![Responsive](https://img.shields.io/badge/Design-Responsive-blue)
 
 
-<img src="./screenshots/overview.png" alt="Finflow Overview" width="100%">
+<img src="screenshots:overview.png" alt="Finflow Overview" width="100%">
 
 ---
 
